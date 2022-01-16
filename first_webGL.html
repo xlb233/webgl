@@ -11,9 +11,79 @@
       }
     </style>
   </head>
-  <body>
+  <body onload="initWebGL()">
     <canvas id="glcanvas" width="640" height="480">
       你的浏览器似乎不支持或者禁用了HTML5 <code>&lt;canvas&gt;</code> 元素.
     </canvas>
   </body>
+  <script>
+    let gl;
+    let c_width = 0,
+      c_heght = 0;
+
+    window.onkeydown = checkKey;
+
+    function checkKey(e) {
+      switch (e.keyCode) {
+        case 49: {
+          gl.clearColor(0.3, 0.7, 0.2, 1.0);
+          clear(gl);
+          break;
+        }
+        case 50: {
+          gl.clearColor(0.3, 0.2, 0.7, 1.0);
+          clear(gl);
+          break;
+        }
+        case 51: {
+          var color = gl.getParameter(gl.COLOR_CLEAR_VALUE);
+          alert(
+            `
+              clearColor = (${Math.round(color[0] * 10) / 10}, ${
+              Math.round(color[1] * 10) / 10
+              }, ${Math.round(color[2] * 10) / 10})
+            `
+          );
+          window.focus();
+          break;
+        }
+      }
+    }
+
+    function clear(ctx) {
+      ctx.clear(ctx.COLOR_BUFFER_BIT);
+    //   ctx.viewport(0, 0, c_width, c_heght);
+    }
+
+    function initWebGL() {
+      gl = getGLContext();
+    }
+
+    function getGLContext() {
+      const canvas = document.querySelector("#glcanvas");
+      const names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
+      let ctx;
+      if (!canvas) {
+        alert(
+          "you are going to need a browser which supports the HTML5 canvas"
+        );
+        return;
+      }
+
+      for (let i = 0; i < names.length; ++i) {
+        try {
+          ctx = canvas.getContext(names[i]);
+        } catch (e) {
+          console.log(e);
+        }
+        if (ctx) break;
+      }
+
+      if (!ctx) {
+        alert("you are going to need a browser which supports the webgl");
+      } else {
+        return ctx;
+      }
+    }
+  </script>
 </html>
